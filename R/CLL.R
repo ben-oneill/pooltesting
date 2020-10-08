@@ -19,33 +19,7 @@ CLL  <- function(x) { Log(-Log(1-x)) }
 
 ICLL <- function(x) { 1-exp(-exp(x)) }
 
-Log <- function(x, base = NULL) {
-
-  #Check input
-  if (!is.vector(x))                            { stop('Error: input x should be a vector') }
-  if ((!is.numeric(x))&(!is.complex(x)))        { stop('Error: input x should be a numeric/complex vector') }
-  if (!missing(base)) {
-  if (!is.vector(base))                         { stop('Error: input base should be a vector')  }
-  if ((!is.numeric(base))&(!is.complex(base)))  { stop('Error: input base should be a numeric/complex vector') }
-  if (length(base) != 1) {
-  if (length(base) != length(x))                { stop('Error: input base must either be a scalar or a vector with the same length as x') } } }
-
-  #Compute natural logarithm
-  LOG <- complex(real = log(abs(x)), imaginary = atan2(Im(x), Re(x)))
-
-  #Adjust for non-natural base
-  if (!missing(base)) {
-    LOGB <- Log(base)
-    LOG  <- LOG/LOGB
-    if (length(base) == 1)   { LOGB <- rep(LOGB, length(LOG)) }
-    for (i in 1:length(LOG)) { if (LOGB[i] == 0) LOG[i] <- ifelse(LOG[i] == 0, 1, NA) } }
-
-  #Set back to real vector
-  if (all(Im(LOG) == 0))     { LOG <- Re(LOG) }
-
+Log <- function(x, base = exp(1)) {
+  LOG <- base::log(as.complex(x), base = base)
+  if (all(Im(LOG) == 0)) { LOG <- Re(LOG) }
   LOG }
-
-
-
-
-
