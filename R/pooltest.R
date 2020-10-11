@@ -77,6 +77,7 @@ pooltest <- function(formula, poolcount = NULL, poolsize, data, fixed.intensity 
     MODEL$family$family <- paste0('Pooled Binomial Model with variable intensity (base intensity = ', base.intensity, ')') }
   MODEL$fixed.intensity <- fixed.intensity
   MODEL$base.intensity  <- base.intensity
+  MODEL$call.internal   <- MODEL$call
   MODEL$call            <- sys.call()
 
   #Add unconstrained model
@@ -95,12 +96,10 @@ summary.pooltest <- function (model, correlation = FALSE, symbolic.cor = FALSE, 
   #Check that input is a pooltest model
   if (!('pooltest' %in% class(model)))                 { stop('Error: Input should be a \'pooltest\' model') }
   
-  #Get rank and residual df
+  #Set preliminary values
   RANK   <- model$rank
   DF.RES <- model$df.residual
-  
-  #Label for coefficient table
-  LABEL <- c('Estimate', 'Std. Error', 'z value', 'Pr(>|z|)')
+  LABEL  <- c('Estimate', 'Std. Error', 'z value', 'Pr(>|z|)')
   
   #Compute coefficient table and covariance matrices
   if (RANK > 0) {
@@ -138,8 +137,8 @@ summary.pooltest <- function (model, correlation = FALSE, symbolic.cor = FALSE, 
   }
   
   #Generate the summary output
-  KEEP    <- match(c('call', 'terms', 'family', 'deviance', 'aic', 'contrasts', 'df.residual', 
-                     'null.deviance', 'df.null', 'iter', 'na.action'), names(model), 0L)
+  KEEP    <- match(c('call', 'terms', 'family', 'deviance', 'aic', 'contrasts', 'df.residual', 'null.deviance', 
+                     'df.null', 'iter', 'na.action', 'fixed.intensity', 'base.intensity'), names(model), 0L)
   SUMMARY <- c(model[KEEP], list(deviance.resid = residuals(model, type = 'deviance'),
                coefficients = COEF.TABLE, aliased = is.na(coef(model)), dispersion = 1,
                df = c(model$rank, DF.RES, DF.REG), cov.unscaled = COV, cov.scaled = COV))
