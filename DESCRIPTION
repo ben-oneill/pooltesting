@@ -1,11 +1,18 @@
 Package: pooltesting
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Inference from Pooled Testing of Binary Data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Date: 2020-10-08
+Authors@R: person("Ben", "O'Neill", email = "ben.oneill@hotmail.com", role = c("aut", "cre"))
+Author: Ben O'Neill [aut, cre]
+Maintainer: Ben O'Neill <ben.oneill@hotmail.com>
+Description: Implements pooled testing for binary data using a two-parameter pooled binomial distribution with allowance for covariates.  Implements the 
+    pooled binomial model and allows diagnostic test of the positive pool probability curve.  Also contains probability functions for the two-parameter pooled 
+    binomial distribution.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: 
+Suggests:
+URL: https://github.com/ben-oneill/pooltesting
+RoxygenNote: 7.1.1
