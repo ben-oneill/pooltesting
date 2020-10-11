@@ -88,3 +88,68 @@ pooltest <- function(formula, poolcount = NULL, poolsize, data, fixed.intensity 
 
   #Give output
   MODEL }
+
+
+summary.pooltest <- function (model, correlation = FALSE, symbolic.cor = FALSE, ...) {
+  
+  #Check that input is a pooltest model
+  if (!('pooltest' %in% class(model)))                 { stop('Error: Input should be a \'pooltest\' model') }
+  
+  #Get rank and residual df
+  RANK   <- model$rank
+  DF.RES <- model$df.residual
+  
+  #Label for coefficient table
+  LABEL <- c('Estimate', 'Std. Error', 'z value', 'Pr(>|z|)')
+  
+  #Compute coefficient table and covariance matrices
+  if (RANK > 0) {
+    
+    #Compute QR decomposition, coefficients and model df
+    PP     <- 1L:RANK
+    QR     <- stats:::qr.lm(model)
+    COEF   <- model$coefficients[QR$pivot[PP]]
+    DF.REG <- NCOL(QR$qr)
+    
+    #Compute covariance matrix
+    COV <- chol2inv(QR$qr[PP, PP, drop = FALSE])
+    dimnames(COV) <- list(names(COEF), names(COEF))
+    VAR <- diag(COV)
+    SE  <- sqrt(VAR)
+    
+    #Compute z-statistics and p-values for coefficient tests
+    Z <- COEF/SE
+    P <- 2*pnorm(-abs(Z))
+    
+    #Generate coefficient table
+    COEF.TABLE <- cbind(COEF, SE, Z, P)
+    dimnames(COEF.TABLE) <- list(names(COEF), LABEL)
+  } else {
+    
+    #Compute model df
+    DF.REG <- length(coef(model))
+    
+    #Create empty covariance matrix
+    COV <- matrix(, 0L, 0L)
+    
+    # Create empty coefficient table
+    COEF.TABLE <- matrix(, 0L, 4L)
+    dimnames(COEF.TABLE) <- list(NULL, LABEL)
+  }
+  
+  #Generate the summary output
+  KEEP    <- match(c('call', 'terms', 'family', 'deviance', 'aic', 'contrasts', 'df.residual', 
+                     'null.deviance', 'df.null', 'iter', 'na.action'), names(model), 0L)
+  SUMMARY <- c(model[KEEP], list(deviance.resid = residuals(model, type = 'deviance'),
+               coefficients = COEF.TABLE, aliased = is.na(coef(model)), dispersion = 1,
+               df = c(model$rank, DF.RES, DF.REG), cov.unscaled = COV, cov.scaled = COV))
+  if (correlation && RANK > 0) {
+      SUMMARY$correlation  <- COV/outer(SE, SE)
+      SUMMARY$symbolic.cor <- symbolic.cor }
+  
+  #Set class
+  class(SUMMARY) <- c('summary.pooltest', 'summary.glm')
+  
+  #Return summary
+  SUMMARY  }
+
