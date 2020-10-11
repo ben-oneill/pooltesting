@@ -8,7 +8,7 @@ Author: Ben O'Neill [aut, cre]
 Maintainer: Ben O'Neill <ben.oneill@hotmail.com>
 Description: Implements pooled testing for binary data using a two-parameter pooled binomial distribution with allowance for covariates.  Implements the 
     pooled binomial model and allows diagnostic test of the positive pool probability curve.  Also contains probability functions for the two-parameter pooled 
-    binomial distribution.
+    binomial distribution and information functions for the distribution.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
